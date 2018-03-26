@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 import java.util.zip.ZipEntry;
@@ -42,14 +43,15 @@ public class IndexController {
 		}
 
 		model.addAttribute("list", list);
-		model.addAttribute("addPic1", webPath + "add1.png");
-		model.addAttribute("addPic2", webPath + "add2.png");
-		model.addAttribute("addPic3", webPath + "add3.png");
+		Date d = new Date();
+		model.addAttribute("addPic1", webPath + "add1.png?r=" + d.getTime());
+		model.addAttribute("addPic2", webPath + "add2.png?r=" + d.getTime());
 		return "index";
 	}
+
 	@RequestMapping("/del")
 	public String del(Integer index) {
-		index ++;
+		index++;
 		int i = 1;
 		String endPic = "";
 		while (true) {
@@ -63,19 +65,19 @@ public class IndexController {
 		if (new File(sourcePic).exists())
 			new File(sourcePic).delete();
 
-		for(int j=index+1;j<end;j++){
-			new File(srcPath + j + ".jpg").renameTo(new File(srcPath + (j-1) + ".jpg"));
+		for (int j = index + 1; j < end; j++) {
+			new File(srcPath + j + ".jpg").renameTo(new File(srcPath + (j - 1) + ".jpg"));
 		}
 		return "redirect:/";
 	}
 
 	@RequestMapping(method = RequestMethod.POST, value = "/uploadSrc")
-	public String uploadSrc(@RequestParam("fileSrc") MultipartFile fileSrc,
-			RedirectAttributes redirectAttributes, HttpServletRequest request) {
+	public String uploadSrc(@RequestParam("fileSrc") MultipartFile fileSrc, RedirectAttributes redirectAttributes,
+			HttpServletRequest request) {
 		int i = 1;
 		String sourcePic = "";
 		while (true) {
-		     sourcePic = srcPath + i + ".jpg";
+			sourcePic = srcPath + i + ".jpg";
 			if (!new File(sourcePic).exists())
 				break;
 			i++;
@@ -96,8 +98,8 @@ public class IndexController {
 
 	@RequestMapping(method = RequestMethod.POST, value = "/upload")
 	public String handleFileUpload(@RequestParam("file1") MultipartFile file1,
-			@RequestParam("file2") MultipartFile file2,
-			RedirectAttributes redirectAttributes, HttpServletRequest request) {
+			@RequestParam("file2") MultipartFile file2, RedirectAttributes redirectAttributes,
+			HttpServletRequest request) {
 		String no = request.getParameter("no");
 		if (!file1.isEmpty()) {
 			File addPic1 = new File(addPicFile1);
@@ -122,9 +124,23 @@ public class IndexController {
 		return "redirect:/";
 	}
 
+	@RequestMapping("/scale")
+	public String scale(Integer type, Float ratio1, Float ratio2) {
+		String addPic1 = srcPath + "add1.png";
+		String addPic2 = srcPath + "add2.png";
+		if (type == 0) {
+
+			ImageHandleHelper.scalcPicture(addPic1, addPic1, ratio1);
+		} else {
+			ImageHandleHelper.scalcPicture(addPic2, addPic2, ratio2);
+
+		}
+		return "redirect:/";
+	}
+
 	@RequestMapping("/preview")
-	public void preview(Integer demoNo, Integer type, Integer x1, Integer y1,
-			Integer x2, Integer y2, HttpServletResponse res) {
+	public void preview(Integer demoNo, Integer type, Integer x1, Integer y1, Integer x2, Integer y2,
+			HttpServletResponse res) {
 
 		String firstPic = srcPath + demoNo + ".jpg";
 		String addPic1 = srcPath + "add1.png";
@@ -144,8 +160,7 @@ public class IndexController {
 				if (!tmpDirFile.exists())
 					tmpDirFile.mkdirs();
 				String tmpFile = tmpDir + UUID.randomUUID().toString() + ".jpg";
-				ImageHandleHelper.overlapImage(firstPic, addPic1, tmpFile, x1,
-						y1);
+				ImageHandleHelper.overlapImage(firstPic, addPic1, tmpFile, x1, y1);
 				ImageHandleHelper.overlapImage(tmpFile, addPic2, os, x2, y2);
 			}
 		} catch (IOException e) {
@@ -157,8 +172,8 @@ public class IndexController {
 	}
 
 	@RequestMapping("/deal")
-	public void deal(Integer demoNo, Integer type, Integer x1,
-			Integer y1, Integer x2, Integer y2, HttpServletResponse res) {
+	public void deal(Integer demoNo, Integer type, Integer x1, Integer y1, Integer x2, Integer y2,
+			HttpServletResponse res) {
 		int i = 1;
 
 		String addPic1 = srcPath + "add1.png";
@@ -182,22 +197,18 @@ public class IndexController {
 					os = res.getOutputStream();
 					zip.putNextEntry(new ZipEntry(i + ".jpg"));
 					if (type == 0)
-						ImageHandleHelper.overlapImage(firstPic, addPic1, zip,
-								x1, y1);
-					
+						ImageHandleHelper.overlapImage(firstPic, addPic1, zip, x1, y1);
+
 					else {
 						String tmpDir = srcPath + "tmp" + File.separatorChar;
 						File tmpDirFile = new File(tmpDir);
 						if (!tmpDirFile.exists())
 							tmpDirFile.mkdirs();
-						String tmpFile = tmpDir + UUID.randomUUID().toString()
-								+ ".jpg";
-						ImageHandleHelper.overlapImage(firstPic, addPic1,
-								tmpFile, x1, y1);
-						ImageHandleHelper.overlapImage(tmpFile, addPic2, zip,
-								x2, y2);
+						String tmpFile = tmpDir + UUID.randomUUID().toString() + ".jpg";
+						ImageHandleHelper.overlapImage(firstPic, addPic1, tmpFile, x1, y1);
+						ImageHandleHelper.overlapImage(tmpFile, addPic2, zip, x2, y2);
 					}
-					
+
 				} catch (IOException e) {
 					e.printStackTrace();
 				} finally {
@@ -212,8 +223,7 @@ public class IndexController {
 
 	}
 
-	
-
+	//public static final String srcPath = "/Users/fengchuang1/eclipse-workspace/photoshop/src/main/resources/static/";
 	public static final String srcPath = "/usr/share/nginx/pic/";
 	public static final String webPath = "http://47.93.243.234/pic/";
 	public static final String addPicFile1 = srcPath + "add1.png";

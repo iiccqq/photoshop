@@ -5,6 +5,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Rectangle;
+import java.awt.Transparency;
 import java.awt.image.BufferedImage;
 import java.awt.image.ConvolveOp;
 import java.awt.image.Kernel;
@@ -282,6 +283,47 @@ public class ImageHandleHelper {
         encoder.setJPEGEncodeParam(param);  
         encoder.encode(bufferedImage);  
     } //
+	
+	  public static void reSizePicture(String fromFile, String toFile, int newWidth,  
+	            int newHeight) {  
+	        try {  
+	            File fromF = new File(fromFile);  
+	            BufferedImage bi = ImageIO.read(fromF);  
+	            BufferedImage to = new BufferedImage(newWidth, newHeight,  
+	                    BufferedImage.TYPE_INT_BGR);  
+	            Graphics2D g2d = to.createGraphics();  
+	            to = g2d.getDeviceConfiguration().createCompatibleImage(newWidth,  
+	                    newHeight, Transparency.TRANSLUCENT);  
+	            g2d.dispose();  
+	            g2d = to.createGraphics();  
+	            Image from = bi.getScaledInstance(newWidth, newHeight,  
+	                    BufferedImage.SCALE_AREA_AVERAGING);  
+	  
+	            g2d.drawImage(from, 0, 0, null);  
+	            g2d.dispose();  
+	  
+	            ImageIO.write(to, "png", new File(toFile));  
+	  
+	        } catch (Exception e) {  
+	            e.printStackTrace();  
+	        }  
+	    }  
+	  public static void scalcPicture(String fromFile, String toFile,float ratio) {
+		  File fromF = new File(fromFile);  
+		  BufferedImage bi;
+		try {
+			bi = ImageIO.read(fromF);
+			 int width = bi.getWidth();
+			 int height = bi.getHeight();
+			 int newWidth = (int)(width * ratio);
+			 int newHeight = (int)(height * ratio);
+			if (newWidth > 0 && newHeight > 0)
+				reSizePicture(fromFile, toFile, newWidth, newHeight);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}  
+		 
+	  }
 
 	public static void main(String[] args) throws Exception {
 		/*

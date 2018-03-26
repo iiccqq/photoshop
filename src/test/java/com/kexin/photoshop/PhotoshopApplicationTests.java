@@ -1,6 +1,7 @@
 package com.kexin.photoshop;
 
 import java.io.File;
+import java.io.IOException;
 
 import org.junit.Test;
 
@@ -50,5 +51,27 @@ public class PhotoshopApplicationTests {
 		
 		
 	}
-
+	//@Test
+	void cutImage() {
+		
+		
+	
+		
+	}
+public static void main(String[] args) {
+	
+	int width = 200;
+	float quality;
+	int height = 200;
+	String old = "/Users/fengchuang1/eclipse-workspace/newtest.png";
+	String newpng = "/Users/fengchuang1/eclipse-workspace/newtest.png";
+	File newFile= new File("/Users/fengchuang1/eclipse-workspace/newtest.png");
+	File oldFile = new File("/Users/fengchuang1/eclipse-workspace/test.png");
+ //ImageHandleHelper.zipImageFile(oldFile , newFile, width, height, 0.5f);
+	
+		//ImageHandleHelper.reSizePicture(old, newpng, 200, 200);
+		ImageHandleHelper.scalcPicture(old, newpng, 0.5f);
+	
+	
+}
 }

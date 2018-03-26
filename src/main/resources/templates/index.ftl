@@ -27,7 +27,8 @@ x:<input type="number" id="x1" name="x1" value="550" />像素
 y:<input type="number" id="y1" name="y1"  value="610" />像素
 <input type="file" name="file1"/>
 <input type="button" value="上传" onclick="upload1()" />
-
+调整比例:<input type="number" id="ratio1" name="ratio1"  value="0.8" />0~1
+<input type="button" value="调整大小" onclick="scale1()" />
 <input type="button" value="预览" onclick="preview1()" />
 <input type="button" value="生成" onclick="deal1()" />
 <img src="">
@@ -39,7 +40,8 @@ y:<input type="number" id="y2" name="y2"  value="450" />像素
 
 <input type="file" name="file2"/>
 <input type="button" value="上传" onclick="upload2()" />
-
+调整比例:<input type="number" id="ratio2" name="ratio2"  value="0.8" />0~1
+<input type="button" value="调整大小" onclick="scale2()" />
 <input type="button" value="预览" onclick="preview2()" />
 <input type="button" value="生成" onclick="deal2()" />
 <br/>
@@ -78,6 +80,12 @@ f.action='upload';
 document.getElementById("type").value = 0;
 f.submit();
 }
+function scale1 (){
+setXY();
+f.action="scale";
+document.getElementById("type").value = 0;
+f.submit();
+}
 function preview1 (){
 setXY();
 f.action="preview";
@@ -93,6 +101,12 @@ f.submit();
 function upload2 (){
 setXY();
 f.action="upload";
+document.getElementById("type").value = 1;
+f.submit();
+}
+function scale2 (){
+setXY();
+f.action="scale";
 document.getElementById("type").value = 1;
 f.submit();
 }
